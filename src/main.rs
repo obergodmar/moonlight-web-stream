@@ -1,4 +1,5 @@
 use common::config::Config;
+#[cfg(feature = "server-tls")]
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use std::{
     fs::OpenOptions,
@@ -270,19 +271,32 @@ async fn start(config: Config) -> Result<(), anyhow::Error> {
         }
     });
 
-    if let Some(certificate) = app.config().web_server.certificate.as_ref() {
-        info!("[Server]: Running Https Server with ssl tls");
+    if app.config().web_server.certificate.is_some() {
+        #[cfg(feature = "server-tls")]
+        {
+            let certificate = app
+                .config()
+                .web_server
+                .certificate
+                .as_ref()
+                .expect("checked certificate");
+            info!("[Server]: Running Https Server with ssl tls");
 
-        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())
-            .expect("failed to create ssl tls acceptor");
-        builder
-            .set_private_key_file(&certificate.private_key_pem, SslFiletype::PEM)
-            .expect("failed to set private key");
-        builder
-            .set_certificate_chain_file(&certificate.certificate_pem)
-            .expect("failed to set certificate");
+            let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())
+                .expect("failed to create ssl tls acceptor");
+            builder
+                .set_private_key_file(&certificate.private_key_pem, SslFiletype::PEM)
+                .expect("failed to set private key");
+            builder
+                .set_certificate_chain_file(&certificate.certificate_pem)
+                .expect("failed to set certificate");
 
-        server.bind_openssl(bind_address, builder)?.run().await?;
+            server.bind_openssl(bind_address, builder)?.run().await?;
+        }
+        #[cfg(not(feature = "server-tls"))]
+        return Err(anyhow::anyhow!(
+            "Server TLS is not compiled; terminate TLS at the trusted edge."
+        ));
     } else {
         server.bind(bind_address)?.run().await?;
     }

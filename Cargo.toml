@@ -51,7 +51,7 @@ hex = { version = "0.4.3" }
 webrtc = { version = "0.17.1", git = "https://github.com/MrCreativ3001/webrtc-rs.git", rev = "c9675e222245e95c056e2dcc0195fb076ffa9b89" }
 
 # Actix
-actix-web = { version = "4.11.0" }
+actix-web = { version = "4.13.0", default-features = false, features = ["macros", "compress-brotli", "compress-gzip", "compress-zstd", "cookies", "unicode", "compat", "ws"] }
 actix-files = "0.6.6"
 actix-ws = "0.3.0"
 
@@ -84,6 +84,10 @@ edition = "2024"
 license = { workspace = true }
 default-run = "web-server"
 
+[features]
+default = ["server-tls"]
+server-tls = ["actix-web/openssl", "actix-web/http2"]
+
 [dependencies]
 moonlight-common = { workspace = true }
 common = { workspace = true }
@@ -93,7 +97,7 @@ futures-concurrency = "7.7.1"
 
 clap = { workspace = true, features = ["derive", "env"] }
 
-actix-web = { workspace = true, features = ["openssl"] }
+actix-web = { workspace = true }
 openssl = { workspace = true }
 actix-files = { workspace = true }
 actix-ws = { workspace = true }
