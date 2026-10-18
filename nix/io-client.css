@@ -1,0 +1,42 @@
+:root {
+  color-scheme: dark;
+  background: #181926;
+  color: #cad3f5;
+  font-family: monospace;
+}
+body {
+  margin: 0;
+  display: grid;
+  place-items: center;
+  height: 100svh;
+  overflow: hidden;
+}
+button {
+  background: #24273a;
+  color: #b7bdf8;
+  border: 1px solid #494d64;
+  padding: 12px 24px;
+  font: inherit;
+  cursor: pointer;
+}
+#surface {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  touch-action: none;
+}
+#surface:empty {
+  display: none;
+}
+#surface > div {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+video,
+canvas {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
