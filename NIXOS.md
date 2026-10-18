@@ -68,3 +68,17 @@ cargo-audit 0.22.1 binary metadata scans with zero vulnerability findings and no
 unsoundness warnings. The server retains the informational unmaintained bincode
 1.3.3 notice (RUSTSEC-2025-0141); track protocol-compatible upstream replacement.
 No advisory is ignored. This does not claim an audit of non-Rust OS libraries.
+
+## IO Popup Bootstrap Regression (2026-10-19)
+
+The panel owns a popup containing the IO iframe. Configuration is sent from
+the panel's JavaScript realm, so MessageEvent.source is the popup opener, not
+the popup itself. Accept the exact parent or its opener with the same-origin
+and single-use checks preserved. Reject unrelated windows and null senders.
+The handshake check executes the actual client handler without media/network
+access. A local browser reproduction confirmed disabled Play before the fix
+and enabled Play afterwards. This verifies bootstrap, not successful media.
+
+```sh
+nix build .#checks.x86_64-linux.io-client-handshake
+```

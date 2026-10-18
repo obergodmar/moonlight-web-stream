@@ -32,7 +32,11 @@ function close(): void {
 Object.assign(window, { ioMoonlightClose: close });
 window.addEventListener('pagehide', close, { once: true });
 window.addEventListener('message', (event: MessageEvent<unknown>) => {
-  if (event.origin !== location.origin || event.source !== parent || configuration) return;
+  // IO configures the iframe from the main panel, which owns the popup.
+  // postMessage retains that opener as its source even inside a popup listener.
+  const fromOwner =
+    event.source === parent || (parent.opener !== null && event.source === parent.opener);
+  if (event.origin !== location.origin || !fromOwner || configuration) return;
   const value = event.data as Partial<Configuration> | null;
   if (
     !value ||

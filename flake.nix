@@ -48,6 +48,12 @@
         in
         {
           package = packageFor system;
+          io-client-handshake = pkgs.runCommand "moonlight-io-client-handshake" { } ''
+            cp ${./nix/io-client.test.mjs} io-client.test.mjs
+            cp ${./nix/io-client.ts} io-client.ts
+            ${pkgs.nodejs_24}/bin/node --test io-client.test.mjs
+            touch $out
+          '';
           nixos-module = import ./nix/test.nix {
             inherit pkgs self;
             package = packageFor system;
