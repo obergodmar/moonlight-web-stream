@@ -88,6 +88,19 @@ play.addEventListener('click', () => {
       },
     },
   );
+  // Only fixed connection-state messages are exposed; never SDP, credentials,
+  // input events or arbitrary upstream diagnostic payloads.
+  stream.addInfoListener((event) => {
+    if (event.detail.type !== 'addDebugLine') return;
+    const line = event.detail.line;
+    if (/^Changing Peer (?:State|Ice State) to (?:new|checking|connecting|connected|completed|disconnected|failed|closed)$/.test(line)) {
+      console.info(`IO WebRTC: ${line}`);
+    }
+  });
+  if (config.transport === 'webrtc' && typeof RTCRtpReceiver !== 'undefined' && typeof RTCRtpReceiver.getCapabilities === 'function') {
+    const capabilities = RTCRtpReceiver.getCapabilities('video');
+    console.info('IO WebRTC: native H264 available', capabilities?.codecs.some((codec) => codec.mimeType.toLowerCase() === 'video/h264') ?? 'unknown');
+  }
   stream.mount(surface);
   surface.focus();
   const input = stream.getInput();

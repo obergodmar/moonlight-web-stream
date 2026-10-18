@@ -83,6 +83,10 @@ let
         cp ${./io-client.ts} web/io-client.ts
         python3 ${./patch-client.py}
         tsc --project tsconfig.json
+        # The packaged input path must never log keys, clipboard or raw packets.
+        ! grep -q 'console.debug' dist/stream/input.js
+        ! grep -q 'console.debug(this.label, message)' dist/stream/transport/webrtc.js
+        ${python3}/bin/python3 -c "from pathlib import Path; s = Path('web/stream/video/openh264_decoder_pipe.ts').read_text(); assert 'import(' not in s.split('static async getInfo()', 1)[1].split('constructor(', 1)[0]"
         mkdir -p "$out"
         cp -r dist/. "$out/"
         while IFS= read -r -d $'\0' asset; do

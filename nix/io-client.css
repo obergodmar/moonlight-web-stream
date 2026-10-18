@@ -40,3 +40,19 @@ canvas {
   max-height: 100%;
   object-fit: contain;
 }
+
+#notification-list {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  max-width: min(420px, 80vw);
+  padding: 0;
+  list-style: none;
+}
+#notification-list li {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: #24273a;
+}
+#notification-list img { width: 20px; height: 20px; }

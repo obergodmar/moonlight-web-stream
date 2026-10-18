@@ -82,3 +82,15 @@ and enabled Play afterwards. This verifies bootstrap, not successful media.
 ```sh
 nix build .#checks.x86_64-linux.io-client-handshake
 ```
+
+## Native IO Media And Privacy Fixes (2026-10-19)
+
+The IO consumer must permit `wasm-unsafe-eval` in the Moonlight document and
+worker CSP for the already-packaged Opus decoder; JavaScript unsafe-eval is not
+required. Native client patches remove keyboard/clipboard and raw input-packet
+console logging, skip probing the optional OpenH264 software module that this
+profile does not ship, and retain native WebRTC/WebCodecs/MSE paths. Build gates
+verify the absence of input logging and optional decoder probing. The adapted
+HTML includes the notification container so errors do not cause fallback alerts.
+Only fixed peer/ICE state messages and a native H264 capability flag are exposed
+for WebRTC diagnostics; SDP and raw diagnostic payloads are not logged.
